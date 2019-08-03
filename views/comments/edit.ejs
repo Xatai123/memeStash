@@ -3,7 +3,7 @@
 <div class="row">
     <h1 style="text-align:center">Edit Comment</h1>
     <div style="width:30%; margin: 35px auto;">
-        <form action="/campgrounds/<%= campground_id %>/comments/<%= comment._id%>?_method=PUT" method="POST">
+        <form action="/memes/<%= meme_id %>/comments/<%= comment._id%>?_method=PUT" method="POST">
             <div class="form-group">
                 <input class="form-control" type="text" name="comment[text]" value="<%=comment.text%>"
                     autocomplete="off">
@@ -12,7 +12,7 @@
                 <input class="btn btn-primary btn-lg btn-block" type="submit">
             </div>
         </form>
-        <a href="/campgrounds">Go back</a>
+        <a href="/memes">Go back</a>
     </div>
 
 </div>

@@ -1,15 +1,15 @@
-var Campground = require("../models/campground");
+var Meme = require("../models/meme");
 var Comment = require("../models/comment");
 var middlewareObj = {};
 
-middlewareObj.checkCampgroundOwnership = function (req, res, next) {
+middlewareObj.checkMemeOwnership = function (req, res, next) {
 	if (req.isAuthenticated()) {
-		Campground.findById(req.params.id, function (err, foundCampground) {
-			if (err || !foundCampground) {
-				req.flash("error", "Campground not found");
+		Meme.findById(req.params.id, function (err, foundMeme) {
+			if (err || !foundMeme) {
+				req.flash("error", "Meme not found");
 				res.redirect("back");
 			} else {
-				if (foundCampground.author.id.equals(req.user._id)) {
+				if (foundMeme.author.id.equals(req.user._id)) {
 					next();
 				} else {
 					req.flash("error", "You don't have permission to do that");

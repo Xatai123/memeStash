@@ -20,8 +20,8 @@ router.post("/register", function (req, res) {
 			return res.redirect("register");
 		}
 		passport.authenticate("local")(req, res, function () {
-			req.flash("success", "Welcome to YelpCamp" + user.username);
-			res.redirect("/campgrounds");
+			req.flash("success", "Welcome to Xatai's Meme website ," + user.username);
+			res.redirect("/memes");
 		});
 	});
 });
@@ -35,7 +35,7 @@ router.get("/login", function (req, res) {
 router.post(
 	"/login",
 	passport.authenticate("local", {
-		successRedirect: "/campgrounds",
+		successRedirect: "/memes",
 		failureRedirect: "/login"
 	}),
 	function (req, res) { }
@@ -45,7 +45,7 @@ router.post(
 router.get("/logout", function (req, res) {
 	req.logout();
 	req.flash("error", "Logged you out");
-	res.redirect("/campgrounds");
+	res.redirect("/memes");
 });
 
 module.exports = router;

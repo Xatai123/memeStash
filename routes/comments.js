@@ -1,25 +1,25 @@
 var express = require("express");
 var router = express.Router({ mergeParams: true });
-var Campground = require("../models/campground");
+var Meme = require("../models/meme");
 var Comment = require("../models/comment");
 var middleware = require("../middleware");
 
 //add comment
 router.get("/new", middleware.isLoggedIn, function (req, res) {
-	Campground.findById(req.params.id, function (err, campground) {
+	Meme.findById(req.params.id, function (err, meme) {
 		if (err) {
 			console.log(err);
 		} else {
-			res.render("comments/new", { campground: campground });
+			res.render("comments/new", { meme: meme });
 		}
 	});
 });
 
 router.post("/", middleware.isLoggedIn, function (req, res) {
-	Campground.findById(req.params.id, function (err, campground) {
+	Meme.findById(req.params.id, function (err, meme) {
 		if (err) {
 			console.log(err);
-			res.redirect("/campgrounds");
+			res.redirect("/memes");
 		} else {
 			Comment.create(req.body.comment, function (err, comment) {
 				if (err) {
@@ -28,9 +28,9 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
 					comment.author.id = req.user._id;
 					comment.author.username = req.user.username;
 					comment.save();
-					campground.comments.push(comment);
-					campground.save();
-					res.redirect("/campgrounds/" + campground._id);
+					meme.comments.push(comment);
+					meme.save();
+					res.redirect("/memes/" + meme._id);
 				}
 			});
 		}
@@ -39,16 +39,16 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
 
 //update comment
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, function (req, res) {
-	Campground.findById(req.params.id, function (err, foundCampground) {
-		if (err || !foundCampground) {
-			req.flash("error", "No Campground found");
+	Meme.findById(req.params.id, function (err, foundMeme) {
+		if (err || !foundMeme) {
+			req.flash("error", "No Meme found");
 			return res.redirect("back");
 		}
 		Comment.findById(req.params.comment_id, function (err, foundComment) {
 			if (err) {
 				res.redirect("back");
 			} else {
-				res.render("comments/edit", { campground_id: req.params.id, comment: foundComment });
+				res.render("comments/edit", { meme_id: req.params.id, comment: foundComment });
 			}
 		});
 	})
@@ -65,7 +65,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, function (
 		if (err) {
 			res.redirect("back");
 		} else {
-			res.redirect("/campgrounds/" + req.params.id);
+			res.redirect("/memes/" + req.params.id);
 		}
 	});
 });
@@ -80,7 +80,7 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, function (
 			res.redirect("back");
 		} else {
 			req.flash("success", "Comment deleted");
-			res.redirect("/campgrounds/" + req.params.id);
+			res.redirect("/memes/" + req.params.id);
 		}
 	});
 });

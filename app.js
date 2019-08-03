@@ -9,7 +9,7 @@ const express = require("express"),
     User = require("./models/user");
 
 const commentRoutes = require("./routes/comments"),
-    campgroundRoutes = require("./routes/campgrounds"),
+    memeRoutes = require("./routes/memes"),
     authRoutes = require("./routes/auth");
 
 mongoose.connect("mongodb+srv://admin:xataiisadmin@xatai123-firstcluster-sqys0.mongodb.net/test?retryWrites=true&w=majority", {
@@ -50,8 +50,8 @@ app.use(function (req, res, next) {
 });
 
 app.use(authRoutes);
-app.use("/campgrounds/:id/comments", commentRoutes);
-app.use("/campgrounds", campgroundRoutes);
+app.use("/memes/:id/comments", commentRoutes);
+app.use("/memes", memeRoutes);
 
 app.listen(process.env.PORT, process.env.IP, function () {
     console.log("Yelpcamp started");
