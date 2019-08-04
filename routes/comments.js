@@ -8,7 +8,7 @@ var middleware = require("../middleware");
 router.get("/new", middleware.isLoggedIn, function (req, res) {
 	Meme.findById(req.params.id, function (err, meme) {
 		if (err) {
-			console.log(err);
+			console.log(err.message);
 		} else {
 			res.render("comments/new", { meme: meme });
 		}
@@ -18,12 +18,12 @@ router.get("/new", middleware.isLoggedIn, function (req, res) {
 router.post("/", middleware.isLoggedIn, function (req, res) {
 	Meme.findById(req.params.id, function (err, meme) {
 		if (err) {
-			console.log(err);
+			console.log(err.message);
 			res.redirect("/memes");
 		} else {
 			Comment.create(req.body.comment, function (err, comment) {
 				if (err) {
-					console.log(err);
+					console.log(err.message);
 				} else {
 					comment.author.id = req.user._id;
 					comment.author.username = req.user.username;

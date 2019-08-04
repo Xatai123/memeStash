@@ -11,8 +11,8 @@ const express = require("express"),
 const commentRoutes = require("./routes/comments"),
     memeRoutes = require("./routes/memes"),
     authRoutes = require("./routes/auth");
-
-mongoose.connect("mongodb+srv://admin:xataiisadmin@xatai123-firstcluster-sqys0.mongodb.net/test?retryWrites=true&w=majority", {
+    
+mongoose.connect(process.env.DATABASEURL, {
     useNewUrlParser: true,
     useCreateIndex: true
 }).then(() => {

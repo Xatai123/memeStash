@@ -6,7 +6,7 @@ var middleware = require("../middleware");
 router.get("/", function (req, res) {
 	Meme.find({}, function (err, meme) {
 		if (err) {
-			console.log(err);
+			console.log(err.message);
 		} else {
 			res.render("memes/index", { memes: meme, page:"memes" });
 		}
