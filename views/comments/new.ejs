@@ -1,9 +1,9 @@
 <% include ../partials/header %>
 
 <div class="row">
-    <h1 style="text-align:center">Add new comment to <%= campground.name %></h1>
+    <h1 style="text-align:center">Add new comment to <%= meme.name %></h1>
     <div style="width:30%; margin: 35px auto;">
-        <form action="/campgrounds/<%= campground._id %>/comments" method="POST">
+        <form action="/memes/<%= meme._id %>/comments" method="POST">
             <div class="form-group">
                 <input class="form-control" type="text" name="comment[text]" placeholder="text" autocomplete="off">
             </div>
@@ -11,7 +11,7 @@
                 <input class="btn btn-primary btn-lg btn-block" type="submit">
             </div>
         </form>
-        <a href="/campgrounds">Go back</a>
+        <a href="/memes">Go back</a>
     </div>
 
 </div>
