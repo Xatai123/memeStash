@@ -11,7 +11,7 @@ const express = require("express"),
 const commentRoutes = require("./routes/comments"),
     memeRoutes = require("./routes/memes"),
     authRoutes = require("./routes/auth");
-    
+
 mongoose.connect(process.env.DATABASEURL, {
     useNewUrlParser: true,
     useCreateIndex: true
@@ -29,6 +29,8 @@ app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
+app.locals.moment = require('moment');
+
 app.use(
     require("express-session")({
         secret: "this is a secret",
@@ -36,6 +38,7 @@ app.use(
         saveUninitialized: false
     })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
