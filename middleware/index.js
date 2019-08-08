@@ -9,7 +9,7 @@ middlewareObj.checkMemeOwnership = function (req, res, next) {
 				req.flash("error", "Meme not found");
 				res.redirect("back");
 			} else {
-				if (foundMeme.author.id.equals(req.user._id)) {
+				if (foundMeme.author.id.equals(req.user._id) || req.user.isAdmin) {
 					next();
 				} else {
 					req.flash("error", "You don't have permission to do that");
@@ -30,7 +30,7 @@ middlewareObj.checkCommentOwnership = function (req, res, next) {
 				req.flash("error", "Comment not found");
 				res.redirect("back");
 			} else {
-				if (foundComment.author.id.equals(req.user._id)) {
+				if (foundComment.author.id.equals(req.user._id) || req.user.isAdmin) {
 					next();
 				} else {
 					req.flash("error", "You don't have permission to do that");
