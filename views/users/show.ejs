@@ -1,0 +1,26 @@
+<% include ../partials/header %>
+
+<div class="row">
+    <div class="col-md-4">
+        <h1><%= user.firstName + " " + user.lastName %></h1>
+        <div class="thumbnail">
+            <img src="<%= user.avatar %>" alt="user pofile image">
+            <div class="caption"><%= user.email %></div>
+        </div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et iusto laborum illum cum, dolores
+        pariatur architecto eligendi possimus quae placeat! Iusto porro saepe autem cupiditate modi, facilis neque
+        fugiat sunt? Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis, obcaecati a reiciendis dolorem,
+        perspiciatis voluptates maxime, sed praesentium dignissimos doloremque nemo neque ea unde sequi libero numquam
+        aliquid, blanditiis tempora suscipit voluptatem eaque vel velit cupiditate ea commodi recusandae quia deserunt
+        eos alias facere delectus mollitia aspernatur sed saepe assumenda et at dolore pariatur. Quis corrupti quibusdam
+        error. Alias ratione consectetur perferendis.
+    </div>
+    <div class="col-md-8">
+        <h2><%= user.username %>'s Memes</h2>
+        <% memes.forEach(function(meme) { %>
+        <a href="/memes/<%= meme.id %>"><%= meme.name %></a>
+        <% }); %>
+    </div>
+</div>
+
+<% include ../partials/footer %>
