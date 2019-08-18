@@ -8,6 +8,7 @@ var UserSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     email: String,
+    createdAt: { type: Date, default: Date.now },
     isAdmin: { type: Boolean, default: false }
 })
 
