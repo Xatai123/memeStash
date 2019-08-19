@@ -10,6 +10,7 @@
   "author": "Khatai Aliyev",
   "license": "ISC",
   "dependencies": {
+    "async": "^3.1.0",
     "body-parser": "^1.18.3",
     "connect-flash": "^0.1.1",
     "ejs": "^2.6.1",
@@ -18,6 +19,7 @@
     "method-override": "^3.0.0",
     "moment": "^2.24.0",
     "mongoose": "^5.4.10",
+    "nodemailer": "^6.3.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^5.0.1"
