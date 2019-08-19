@@ -104,7 +104,9 @@ router.post("/forgot", function (req, res, next) {
                return res.redirect("/forgot");
             }
 
-            user.reserPasswordToken = token;
+            console.log(token);
+            
+            user.resetPasswordToken = token;
             user.resetPasswordExpires = Date.now() + 3600000;
 
             user.save(function (err) {
@@ -118,17 +120,20 @@ router.post("/forgot", function (req, res, next) {
             auth: {
                user: "thexatai@gmail.com",
                pass: process.env.GMAILPW
-            }
+            },
+            tls: {
+               rejectUnauthorized: false
+           }
          });
          var mailOptions = {
             to: user.email,
             from: "memeStash",
             subject: "memeStash Password Reset",
-            text: "click teh link below to change your password" +
+            text: "click teh link below to change your password\n\n" +
                "http://" + req.headers.host + "/reset/" + token + "\n\n"
          };
          smtpTransport.sendMail(mailOptions, function (err) {
-            console.log("mail snet");
+            console.log("mail sent");
             req.flash("success", "An email has been sent too " + user.email + " with further instructions");
             done(err, "done");
          });
@@ -142,19 +147,19 @@ router.post("/forgot", function (req, res, next) {
 
 // reset password
 router.get("/reset/:token", function (req, res) {
-   User.findOne({ reserPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
+   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
       if (!user) {
          req.flash("error", "Password reset token is invalid or has expired");
          return res.redirect("/forgot")
       }
-      res.render("user/reset", { token: req.params.token })
+      res.render("users/reset", { token: req.params.token })
    })
 })
 
 router.post("/reset/:token", function (req, res) {
    async.waterfall([
       function (done) {
-         User.findOne({ reserPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
+         User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
             if (!user) {
                req.flash("error", "Password reset token is invalid or has expired");
                return res.redirect("back")
@@ -182,7 +187,10 @@ router.post("/reset/:token", function (req, res) {
             auth: {
                user: "thexatai@gmail.com",
                pass: process.env.GMAILPW
-            }
+            },
+            tls: {
+               rejectUnauthorized: false
+           }
          });
          var mailOptions = {
             to: user.email,
