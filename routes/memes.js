@@ -4,13 +4,29 @@ var Meme = require("../models/meme");
 var middleware = require("../middleware");
 
 router.get("/", function (req, res) {
-	Meme.find({}, function (err, meme) {
-		if (err) {
-			console.log(err.message);
-		} else {
-			res.render("memes/index", { memes: meme, page:"memes" });
-		}
-	});
+	let noMatch = "";
+	if (req.query.search) {
+		const regex = new RegExp(escapeRegex(req.query.search), 'gi');		
+		Meme.find({name: regex}, function (err, foundMemes) {
+			if (err) {
+				console.log(err.message);
+			} else {
+				if(foundMemes < 1){
+					noMatch = "No match for what you are lookin for, mate."
+				}
+				
+				res.render("memes/index", { memes: foundMemes, page: "memes", noMatch: noMatch});
+			}
+		});
+	} else {
+		Meme.find({}, function (err, meme) {
+			if (err) {
+				console.log(err.message);
+			} else {
+				res.render("memes/index", { memes: meme, page: "memes", noMatch: noMatch });
+			}
+		});
+	}
 });
 
 // new meme
@@ -91,5 +107,9 @@ router.delete("/:id", middleware.checkMemeOwnership, function (req, res) {
 		}
 	});
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 module.exports = router;
