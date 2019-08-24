@@ -52,11 +52,14 @@ router.get("/", function (req, res) {
 
 // new meme
 router.post("/", middleware.isLoggedIn, upload.single('image'), function (req, res) {
-	cloudinary.uploader.upload(req.file.path, function (result) {
-		// add cloudinary url for the image to the meme object under image property
+	cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
+		if (err) {
+			req.flash("error", err.message);
+			return redirect("back");
+		}
 		req.body.meme.image = result.secure_url;
+		req.body.meme.imageId = result.public_id;
 
-		// add author to meme
 		req.body.meme.author = {
 			id: req.user._id,
 			username: req.user.username
@@ -90,23 +93,34 @@ router.get("/:id", function (req, res) {
 });
 
 //edit meme
-router.get("/:id/edit", middleware.checkMemeOwnership, function (
-	req,
-	res
-) {
+router.get("/:id/edit", middleware.checkMemeOwnership, function (req, res) {
 	Meme.findById(req.params.id, function (err, foundMeme) {
 		res.render("memes/edit", { meme: foundMeme });
 	});
 });
 
-router.put("/:id", middleware.checkMemeOwnership, function (req, res) {
-	Meme.findByIdAndUpdate(req.params.id, req.body.meme, function (
-		err,
-		upddatedMeme
-	) {
+router.put("/:id", middleware.checkMemeOwnership, upload.single('image'), function (req, res) {
+	Meme.findById(req.params.id, async function (err, upddatedMeme) {
 		if (err) {
-			res.redirect("/memes");
+			req.flash("error", err.message)
+			res.redirect("back");
 		} else {
+			if (req.file) {
+				try {
+					await cloudinary.v2.uploader.destroy(upddatedMeme.imageId);
+					let result = await cloudinary.v2.uploader.upload(req.file.path);
+					upddatedMeme.imageId = result.public_id;
+					upddatedMeme.image = result.secure_url;
+				} catch (err) {
+					req.flash("error", err.message)
+					return res.redirect("back");
+				}
+			}
+			upddatedMeme.name = req.body.name;
+			upddatedMeme.description = req.body.description;
+			upddatedMeme.save();
+
+			req.flash("success", "Succesfully updated meme")
 			res.redirect("/memes/" + req.params.id);
 		}
 	});
@@ -114,11 +128,19 @@ router.put("/:id", middleware.checkMemeOwnership, function (req, res) {
 
 //destroy meme
 router.delete("/:id", middleware.checkMemeOwnership, function (req, res) {
-	Meme.findByIdAndRemove(req.params.id, function (err) {
+	Meme.findById(req.params.id, async function (err, foundMeme) {
 		if (err) {
+			req.flash("error", err.message)
+			return res.redirect("back");
+		}
+		try {
+			await cloudinary.v2.uploader.destroy(foundMeme.imageId);
+			foundMeme.remove();
+			req.flash("success", "Succesfully deleted Meme");
 			res.redirect("/memes");
-		} else {
-			res.redirect("/memes");
+		} catch (err) {
+			req.flash("error", err.message)
+			return res.redirect("back");
 		}
 	});
 });
