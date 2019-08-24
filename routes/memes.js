@@ -52,26 +52,30 @@ router.get("/", function (req, res) {
 
 // new meme
 router.post("/", middleware.isLoggedIn, upload.single('image'), function (req, res) {
-	cloudinary.v2.uploader.upload(req.file.path, function (err, result) {
-		if (err) {
-			req.flash("error", err.message);
-			return redirect("back");
-		}
-		req.body.meme.image = result.secure_url;
-		req.body.meme.imageId = result.public_id;
-
-		req.body.meme.author = {
-			id: req.user._id,
-			username: req.user.username
-		}
-		Meme.create(req.body.meme, function (err, meme) {
+	cloudinary.v2.uploader.upload(req.file.path, {
+		folder: process.env.CLOUDINARY_FOLDER,
+		use_filename: true
+	},
+		function (err, result) {
 			if (err) {
-				req.flash('error', err.message);
-				return res.redirect('back');
+				req.flash("error", err.message);
+				return redirect("back");
 			}
-			res.redirect('/memes/' + meme.id);
+			req.body.meme.image = result.secure_url;
+			req.body.meme.imageId = result.public_id;
+
+			req.body.meme.author = {
+				id: req.user._id,
+				username: req.user.username
+			}
+			Meme.create(req.body.meme, function (err, meme) {
+				if (err) {
+					req.flash('error', err.message);
+					return res.redirect('back');
+				}
+				res.redirect('/memes/' + meme.id);
+			});
 		});
-	});
 });
 
 router.get("/new", middleware.isLoggedIn, function (req, res) {
