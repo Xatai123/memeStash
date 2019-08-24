@@ -129,7 +129,8 @@ router.post("/forgot", function (req, res, next) {
             to: user.email,
             from: "memeStash",
             subject: "memeStash Password Reset",
-            text: "click teh link below to change your password\n\n" +
+            text: "A password reset has been requested for " + user.username + "\n\n" +
+            "click teh link below to change your password\n\n" +
                "http://" + req.headers.host + "/reset/" + token + "\n\n"
          };
          smtpTransport.sendMail(mailOptions, function (err) {

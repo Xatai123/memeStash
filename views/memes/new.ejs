@@ -3,21 +3,25 @@
 <div class="row">
     <h1 style="text-align:center">Create a new meme</h1>
     <div style="width:30%; margin: 35px auto;">
-        <form action="/memes" method="POST">
+        <form action="/memes" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <input class="form-control" type="text" name="name" placeholder="name" autocomplete="off">
+                <input class="form-control" type="text" name="meme[name]" placeholder="name" autocomplete="off">
             </div>
             <!-- <div class="form-group">
                 <input class="form-control" type="number" name="price" placeholder="price" min="0.01" step="0.01">
             </div> -->
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <input class="form-control" type="text" name="image" placeholder="meme url" autocomplete="on">
+            </div> -->
+            <div class="form-group">
+                <label for="image">Image</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
             </div>
             <div class="form-group">
-                <input class="form-control" type="text" name="description" placeholder="description" autocomplete="off">
+                <input class="form-control" type="text" name="meme[description]" placeholder="description" autocomplete="off">
             </div>
             <div class="form-group">
-                <input class="btn btn-primary btn-lg btn-block" type="submit">
+                <button class="btn btn-lg btn-primary btn-block">Submit</button>
             </div>
         </form>
         <a href="/memes">Go back</a>

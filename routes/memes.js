@@ -2,20 +2,41 @@ var express = require("express");
 var router = express.Router();
 var Meme = require("../models/meme");
 var middleware = require("../middleware");
+var multer = require('multer');
+var storage = multer.diskStorage({
+	filename: function (req, file, callback) {
+		callback(null, Date.now() + file.originalname);
+	}
+});
+var imageFilter = function (req, file, cb) {
+	// accept image files only
+	if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+		return cb(new Error('Only image files are allowed!'), false);
+	}
+	cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter })
+
+var cloudinary = require('cloudinary');
+cloudinary.config({
+	cloud_name: "xatai123cloud",
+	api_key: process.env.CLOUDINARY_API,
+	api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 router.get("/", function (req, res) {
 	let noMatch = "";
 	if (req.query.search) {
-		const regex = new RegExp(escapeRegex(req.query.search), 'gi');		
-		Meme.find({name: regex}, function (err, foundMemes) {
+		const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+		Meme.find({ name: regex }, function (err, foundMemes) {
 			if (err) {
 				console.log(err.message);
 			} else {
-				if(foundMemes < 1){
+				if (foundMemes < 1) {
 					noMatch = "No match for what you are lookin for, mate."
 				}
-				
-				res.render("memes/index", { memes: foundMemes, page: "memes", noMatch: noMatch});
+
+				res.render("memes/index", { memes: foundMemes, page: "memes", noMatch: noMatch });
 			}
 		});
 	} else {
@@ -30,29 +51,23 @@ router.get("/", function (req, res) {
 });
 
 // new meme
-router.post("/", middleware.isLoggedIn, function (req, res) {
-	var name = req.body.name;
-	var price = req.body.price;
-	var image = req.body.image;
-	var description = req.body.description;
-	var author = {
-		id: req.user._id,
-		username: req.user.username
-	};
-	var newCampgorund = {
-		name: name,
-		price: price,
-		image: image,
-		description: description,
-		author: author
-	};
-	Meme.create(newCampgorund, function (err, meme) {
-		if (err) {
-			req.flash("error", "Something went wrong");
-		} else {
-			req.flash("success", "Successfully created Meme");
-			res.redirect("memes");
+router.post("/", middleware.isLoggedIn, upload.single('image'), function (req, res) {
+	cloudinary.uploader.upload(req.file.path, function (result) {
+		// add cloudinary url for the image to the meme object under image property
+		req.body.meme.image = result.secure_url;
+
+		// add author to meme
+		req.body.meme.author = {
+			id: req.user._id,
+			username: req.user.username
 		}
+		Meme.create(req.body.meme, function (err, meme) {
+			if (err) {
+				req.flash('error', err.message);
+				return res.redirect('back');
+			}
+			res.redirect('/memes/' + meme.id);
+		});
 	});
 });
 
@@ -109,7 +124,7 @@ router.delete("/:id", middleware.checkMemeOwnership, function (req, res) {
 });
 
 function escapeRegex(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 
 module.exports = router;
