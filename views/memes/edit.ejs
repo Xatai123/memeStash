@@ -1,8 +1,10 @@
 <% include ../partials/header %>
 
-<div class="row">
-  <h1 style="text-align:center">Edit <%= meme.name %></h1>
-  <div style="width:30%; margin: 35px auto;">
+<div class="row justify-content-center">
+  <div class="col-12 text-center">
+    <h1 class="mb-4">Edit <%= meme.name %></h1>
+  </div>
+  <div class="col-10 col-sm-8 col-md-6 col-lg-4">
     <form action="/memes/<%= meme._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <input class="form-control" type="text" name="name" value="<%= meme.name %>" autocomplete="off" />
@@ -15,14 +17,13 @@
         <input type="file" id="image" name="image" accept="image/*">
       </div>
       <div class="form-group">
-        <input class="form-control" type="text" name="description" value="<%= meme.description %>"
-          autocomplete="off" />
+        <input class="form-control" type="text" name="description" value="<%= meme.description %>" autocomplete="off" />
       </div>
       <div class="form-group">
         <input class="btn btn-primary btn-lg btn-block" type="submit" />
       </div>
     </form>
-    <a href="/memes">Go back</a>
+    <a class="float-left" href="/memes">Go back</a>
   </div>
 </div>
 

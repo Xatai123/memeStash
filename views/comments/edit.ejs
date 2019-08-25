@@ -1,8 +1,10 @@
 <% include ../partials/header %>
 
-<div class="row">
-    <h1 style="text-align:center">Edit Comment</h1>
-    <div style="width:30%; margin: 35px auto;">
+<div class="row justify-content-center">
+    <div class="col-12 text-center">
+        <h1 class="mb-4">Edit Comment</h1>
+    </div>
+    <div class="col-10 col-sm-8 col-md-6 col-lg-4">
         <form action="/memes/<%= meme_id %>/comments/<%= comment._id%>?_method=PUT" method="POST">
             <div class="form-group">
                 <input class="form-control" type="text" name="comment[text]" value="<%=comment.text%>"
@@ -12,7 +14,7 @@
                 <input class="btn btn-primary btn-lg btn-block" type="submit">
             </div>
         </form>
-        <a href="/memes">Go back</a>
+        <a class="float-left" href="/memes">Go back</a>
     </div>
 
 </div>
